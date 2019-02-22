@@ -1,0 +1,11 @@
+stages:
+  - openMr
+  - reload
+openMr:
+  stage: openMr
+  image: tedezed/debian-box:latest
+  script:
+    - |
+      HOST=${CI_PROJECT_URL} PREFIX="" CI_PROJECT_ID=${CI_PROJECT_ID} CI_COMMIT_REF_NAME=${CI_COMMIT_REF_NAME} GITLAB_USER_ID=${GITLAB_USER_ID} PRIVATE_TOKEN=${PRIVATE_TOKEN} ./.utils/autoMergeRequest.sh
+  only:
+    - develop

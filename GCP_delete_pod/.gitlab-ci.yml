@@ -1,0 +1,15 @@
+stages:
+  - reload
+reload:
+  stage: reload
+  image: tedezed/debian-box:latest
+  script:
+    - |
+      echo ${GCLOUD_SA} | base64 -d > ${HOME}/gcloud-sa.json \
+      && gcloud auth activate-service-account --key-file=${HOME}/gcloud-sa.json \
+      && gcloud container clusters get-credentials guadaltech-tools \
+      --zone europe-west1-b \
+      --project $(cat ${HOME}/gcloud-sa.json | python -c "import sys, json; print(json.load(sys.stdin)['project_id'])") \
+      && kubectl delete pod -l app=test -n test
+  only:
+    - master
